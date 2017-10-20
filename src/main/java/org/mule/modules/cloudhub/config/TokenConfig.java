@@ -23,6 +23,11 @@ public class TokenConfig implements Config {
 
     private CloudHubConnectionImpl cloudHubClient;
 
+    @Configurable
+    @Default("false")
+    @FriendlyName("Enable debug.")
+    private Boolean debug = false;
+
     /**
      * Maximum time allowed to deploy/undeploy.
      */
@@ -37,13 +42,21 @@ public class TokenConfig implements Config {
 
     public CloudHubConnectionImpl getClient() {
         if(cloudHubClient == null){
-            cloudHubClient = new CloudHubConnectionImpl(url, null, null, null, false);
+            cloudHubClient = new CloudHubConnectionImpl(url, null, null, null, this.debug);
     }
         return cloudHubClient;
     }
 
     public Long getMaxWaitTime() {
         return maxWaitTime;
+    }
+
+    public Boolean getDebug() {
+        return debug;
+    }
+
+    public void setDebug(Boolean debug) {
+        this.debug = debug;
     }
 
     public String getUrl() {

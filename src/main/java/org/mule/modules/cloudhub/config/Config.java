@@ -17,4 +17,6 @@ public interface Config {
 
     Long getMaxWaitTime();
 
+    Boolean getDebug();
+
 }

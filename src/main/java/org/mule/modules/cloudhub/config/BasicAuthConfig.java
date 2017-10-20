@@ -32,6 +32,11 @@ public class BasicAuthConfig implements Config {
 
     private CloudHubConnectionImpl cloudHubClient;
 
+    @Configurable
+    @Default("false")
+    @FriendlyName("Enable debug.")
+    private Boolean debug = false;
+
     public Long getMaxWaitTime() {
         return maxWaitTime;
     }
@@ -100,5 +105,13 @@ public class BasicAuthConfig implements Config {
 
     public CloudHubConnectionImpl getClient() {
         return cloudHubClient;
+    }
+
+    public Boolean getDebug() {
+        return debug;
+    }
+
+    public void setDebug(Boolean debug) {
+        this.debug = debug;
     }
 }
