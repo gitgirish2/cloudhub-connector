@@ -1,0 +1,284 @@
+{
+  "$id": "http://example.com/example.json",
+  "type": "array",
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "items": {
+    "$id": "http://example.com/example.json/items",
+    "type": "object",
+    "properties": {
+      "id": {
+        "$id": "http://example.com/example.json/items/properties/id",
+        "type": "string",
+        "title": "The Id Schema ",
+        "default": "",
+        "examples": [
+          "54f7eda4e4b008704d5a1d98"
+        ]
+      },
+      "href": {
+        "$id": "http://example.com/example.json/items/properties/href",
+        "type": "string",
+        "title": "The Href Schema ",
+        "default": "",
+        "examples": [
+          "http://anypoint.mulesoft.com:8080/api/applications/example-app"
+        ]
+      },
+      "domain": {
+        "$id": "http://example.com/example.json/items/properties/domain",
+        "type": "string",
+        "title": "The Domain Schema ",
+        "default": "",
+        "examples": [
+          "example-app"
+        ]
+      },
+      "fullDomain": {
+        "$id": "http://example.com/example.json/items/properties/fullDomain",
+        "type": "string",
+        "title": "The Fulldomain Schema ",
+        "default": "",
+        "examples": [
+          "example-app.cloudhub.io"
+        ]
+      },
+      "properties": {
+        "$id": "http://example.com/example.json/items/properties/properties",
+        "type": "object"
+      },
+      "propertiesOptions": {
+        "$id": "http://example.com/example.json/items/properties/propertiesOptions",
+        "type": "object"
+      },
+      "status": {
+        "$id": "http://example.com/example.json/items/properties/status",
+        "type": "string",
+        "title": "The Status Schema ",
+        "default": "",
+        "examples": [
+          "UNDEPLOYED"
+        ]
+      },
+      "workers": {
+        "$id": "http://example.com/example.json/items/properties/workers",
+        "type": "integer",
+        "title": "The Workers Schema ",
+        "default": 0,
+        "examples": [
+          1
+        ]
+      },
+      "workerType": {
+        "$id": "http://example.com/example.json/items/properties/workerType",
+        "type": "string",
+        "title": "The Workertype Schema ",
+        "default": "",
+        "examples": [
+          "Medium"
+        ]
+      },
+      "lastUpdateTime": {
+        "$id": "http://example.com/example.json/items/properties/lastUpdateTime",
+        "type": "integer",
+        "title": "The Lastupdatetime Schema ",
+        "default": 0,
+        "examples": [
+          1425534372131
+        ]
+      },
+      "remainingWorkerCount": {
+        "$id": "http://example.com/example.json/items/properties/remainingWorkerCount",
+        "type": "integer",
+        "title": "The Remainingworkercount Schema ",
+        "default": 0,
+        "examples": [
+          0
+        ]
+      },
+      "muleVersion": {
+        "$id": "http://example.com/example.json/items/properties/muleVersion",
+        "type": "string",
+        "title": "The Muleversion Schema ",
+        "default": "",
+        "examples": [
+          "3.5.2"
+        ]
+      },
+      "supportedVersions": {
+        "$id": "http://example.com/example.json/items/properties/supportedVersions",
+        "type": "array",
+        "items": {
+          "$id": "http://example.com/example.json/items/properties/supportedVersions/items",
+          "type": "string",
+          "title": "The 0th Schema ",
+          "default": "",
+          "examples": [
+            "3.3.2",
+            "3.5.2"
+          ]
+        }
+      },
+      "instanceSize": {
+        "$id": "http://example.com/example.json/items/properties/instanceSize",
+        "type": "string",
+        "title": "The Instancesize Schema ",
+        "default": "",
+        "examples": [
+          "m3.medium"
+        ]
+      },
+      "tenants": {
+        "$id": "http://example.com/example.json/items/properties/tenants",
+        "type": "integer",
+        "title": "The Tenants Schema ",
+        "default": 0,
+        "examples": [
+          0
+        ]
+      },
+      "region": {
+        "$id": "http://example.com/example.json/items/properties/region",
+        "type": "string",
+        "title": "The Region Schema ",
+        "default": "",
+        "examples": [
+          "us-east-1"
+        ]
+      },
+      "userId": {
+        "$id": "http://example.com/example.json/items/properties/userId",
+        "type": "string",
+        "title": "The Userid Schema ",
+        "default": "",
+        "examples": [
+          "54f7ed7ae4b0d48f31a3099e"
+        ]
+      },
+      "userName": {
+        "$id": "http://example.com/example.json/items/properties/userName",
+        "type": "string",
+        "title": "The Username Schema ",
+        "default": "",
+        "examples": [
+          "fred-smith"
+        ]
+      },
+      "vpnConfig": {
+        "$id": "http://example.com/example.json/items/properties/vpnConfig",
+        "type": "object",
+        "properties": {
+          "network": {
+            "$id": "http://example.com/example.json/items/properties/vpnConfig/properties/network",
+            "type": "string",
+            "title": "The Network Schema ",
+            "default": "",
+            "examples": [
+              "203.0.113.0"
+            ]
+          },
+          "mask": {
+            "$id": "http://example.com/example.json/items/properties/vpnConfig/properties/mask",
+            "type": "integer",
+            "title": "The Mask Schema ",
+            "default": 0,
+            "examples": [
+              27
+            ]
+          }
+        }
+      },
+      "hasFile": {
+        "$id": "http://example.com/example.json/items/properties/hasFile",
+        "type": "boolean",
+        "title": "The Hasfile Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      },
+      "staticIPsEnabled": {
+        "$id": "http://example.com/example.json/items/properties/staticIPsEnabled",
+        "type": "boolean",
+        "title": "The Staticipsenabled Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      },
+      "multitenanted": {
+        "$id": "http://example.com/example.json/items/properties/multitenanted",
+        "type": "boolean",
+        "title": "The Multitenanted Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      },
+      "persistentQueues": {
+        "$id": "http://example.com/example.json/items/properties/persistentQueues",
+        "type": "boolean",
+        "title": "The Persistentqueues Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      },
+      "monitoringAutoRestart": {
+        "$id": "http://example.com/example.json/items/properties/monitoringAutoRestart",
+        "type": "boolean",
+        "title": "The Monitoringautorestart Schema ",
+        "default": false,
+        "examples": [
+          true
+        ]
+      },
+      "encryptedPersistentQueues": {
+        "$id": "http://example.com/example.json/items/properties/encryptedPersistentQueues",
+        "type": "boolean",
+        "title": "The Encryptedpersistentqueues Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      },
+      "ipAddresses": {
+        "$id": "http://example.com/example.json/items/properties/ipAddresses",
+        "type": "array"
+      },
+      "secureDataGateway": {
+        "$id": "http://example.com/example.json/items/properties/secureDataGateway",
+        "type": "object",
+        "properties": {
+          "connected": {
+            "$id": "http://example.com/example.json/items/properties/secureDataGateway/properties/connected",
+            "type": "boolean",
+            "title": "The Connected Schema ",
+            "default": false,
+            "examples": [
+              false
+            ]
+          }
+        }
+      },
+      "secureDataGatewayEnabled": {
+        "$id": "http://example.com/example.json/items/properties/secureDataGatewayEnabled",
+        "type": "boolean",
+        "title": "The Securedatagatewayenabled Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      },
+      "vpnEnabled": {
+        "$id": "http://example.com/example.json/items/properties/vpnEnabled",
+        "type": "boolean",
+        "title": "The Vpnenabled Schema ",
+        "default": false,
+        "examples": [
+          false
+        ]
+      }
+    }
+  }
+}

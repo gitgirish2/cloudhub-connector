@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cloudhub="http://www.mulesoft.org/schema/mule/cloudhub"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:mule="http://www.mulesoft.org/schema/mule/core" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
+    <munit:config name="new-test-suite.xml" />
+    
+    <cloudhub:config name="config">
+        <cloudhub:connection username="${user}" password="${password}" defaultEnvironment="295da1be-daa9-421f-8697-692d4f4e1193" />
+    </cloudhub:config>
+
+    <munit:test name="createNotificationThenList" >
+        <munit:execution>
+            <set-variable variableName="domain" value="#[uuid()]"/>
+            <set-variable variableName="message" value="#['this is the message ' ++ uuid()]"/>
+            <set-variable variableName="propertyValue" value="#[uuid()]"/>
+            <cloudhub:create-notification config-ref="config" domain="#[vars.domain]">
+                <cloudhub:message>#[vars.message]</cloudhub:message>
+                <cloudhub:custom-properties>#[{customProp : vars.propertyValue}]</cloudhub:custom-properties>
+            </cloudhub:create-notification>
+        </munit:execution>
+        <munit:validation>
+            <cloudhub:list-notifications config-ref="config" domain="#[vars.domain]"/>
+            <logger message="#[payload]" level="DEBUG"/>
+            <munit-tools:assert-that expression="#[sizeOf(payload)]" is="#[MunitTools::equalTo(1)]"/>
+            <set-payload value="#[payload[0]]"/>
+            <munit-tools:assert-that expression="#[payload.properties.customProp]" is="#[MunitTools::equalTo(vars.propertyValue)]"/>
+            <munit-tools:assert-that expression="#[payload.message]" is="#[MunitTools::equalTo(vars.message)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="createNotificationListAndMarkAsRead" >
+        <munit:execution>
+            <set-variable variableName="domain" value="#[uuid()]"/>
+            <cloudhub:create-notification config-ref="config" domain="#[vars.domain]">
+                <cloudhub:message>#['message']</cloudhub:message>
+            </cloudhub:create-notification>
+        </munit:execution>
+        <munit:validation>
+            <cloudhub:list-notifications config-ref="config" domain="#[vars.domain]" status="ALL"/>
+            <logger message="#[payload]" level="DEBUG"/>
+            <munit-tools:assert-that expression="#[sizeOf(payload)]" is="#[MunitTools::equalTo(1)]"/>
+            <set-payload value="#[payload[0]]"/>
+            <munit-tools:assert-that expression="#[payload.status]" is="#[MunitTools::equalTo('unread')]"/>
+            <cloudhub:mark-notification markAs="READ" notificationId="#[payload.id]"/>
+            <cloudhub:list-notifications config-ref="config" domain="#[vars.domain]" status="ALL"/>
+            <set-payload value="#[payload[0]]"/>
+            <munit-tools:assert-that expression="#[payload.status]" is="#[MunitTools::equalTo('read')]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
