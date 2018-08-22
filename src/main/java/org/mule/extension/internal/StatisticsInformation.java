@@ -11,6 +11,11 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Parameter Group that contains all the parameter related to Statistics Retrieval Information
+ *
+ * @since 1.0.0
+ */
 public class StatisticsInformation {
 
   public StatisticsInformation() {}
@@ -33,14 +38,14 @@ public class StatisticsInformation {
    */
   @Parameter
   @Optional(defaultValue = "1")
-  private int period;
+  private int period = 1;
 
   /**
    * Time Unit of the period
    */
   @Parameter
   @Optional(defaultValue = "HOURS")
-  private TimeUnit periodTimeUnit;
+  private TimeUnit periodTimeUnit = TimeUnit.HOURS;
 
   public boolean isRetrieveStatistics() {
     return retrieveStatistics;

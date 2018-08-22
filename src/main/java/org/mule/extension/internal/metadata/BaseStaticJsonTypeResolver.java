@@ -6,21 +6,13 @@
  */
 package org.mule.extension.internal.metadata;
 
-import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-
-import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.json.api.JsonTypeLoader;
-import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
-import org.mule.runtime.api.metadata.MetadataResolvingException;
-import org.mule.runtime.api.metadata.resolving.OutputStaticTypeResolver;
 import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
 import org.mule.runtime.core.api.util.IOUtils;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 public abstract class BaseStaticJsonTypeResolver implements OutputTypeResolver {
 
@@ -35,8 +27,7 @@ public abstract class BaseStaticJsonTypeResolver implements OutputTypeResolver {
   }
 
   @Override
-  public MetadataType getOutputType(MetadataContext metadataContext, Object o)
-      throws MetadataResolvingException, ConnectionException {
+  public MetadataType getOutputType(MetadataContext metadataContext, Object o) {
     return getMetadataFrom(getJsonLocation(), getJsonTypeName());
   }
 

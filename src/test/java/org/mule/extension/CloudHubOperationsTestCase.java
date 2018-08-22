@@ -9,7 +9,7 @@ package org.mule.extension;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
-import org.mule.extension.internal.CloudHubError;
+import org.mule.extension.internal.error.CloudHubError;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.connection.ConnectionValidationResult;

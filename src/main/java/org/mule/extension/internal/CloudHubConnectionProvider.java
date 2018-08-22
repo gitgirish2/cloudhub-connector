@@ -6,23 +6,22 @@
  */
 package org.mule.extension.internal;
 
-import static org.mule.extension.internal.CloudHubError.INVALID_CREDENTIALS;
+import static org.mule.extension.internal.error.CloudHubError.INVALID_CREDENTIALS;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 import org.mule.extension.internal.connection.CloudHubConnection;
+import org.mule.extension.internal.error.CloudHubConnectivityException;
+import org.mule.extension.internal.error.CloudHubException;
 import org.mule.extension.internal.value.provider.AnypointPlatformUrlProvider;
 import org.mule.extension.internal.value.provider.EnvironmentsValueProvider;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.connection.PoolingConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.CachedConnectionProvider;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.values.OfValues;
-import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.http.api.HttpService;
 import org.mule.runtime.http.api.domain.message.response.HttpResponse;
 
@@ -36,17 +35,11 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * This class (as it's name implies) provides connection instances and the funcionality to disconnect and validate those
- * connections.
- * <p>
- * All connection related parameters (values required in order to create a connection) must be
- * declared in the connection providers.
- * <p>
- * This particular example is a {@link PoolingConnectionProvider} which declares that connections resolved by this provider
- * will be pooled and reused. There are other implementations like {@link CachedConnectionProvider} which lazily creates and
- * caches connections or simply {@link ConnectionProvider} if you want a new connection each time something requires one.
+ * Connection Provider that provides {@link CloudHubConnection}.
+ *
+ * @since 1.0.0
  */
-public class CloudHubConnectionProvider implements PoolingConnectionProvider<CloudHubConnection> {
+public class CloudHubConnectionProvider implements CachedConnectionProvider<CloudHubConnection> {
 
   private final Logger LOGGER = LoggerFactory.getLogger(CloudHubConnectionProvider.class);
 
@@ -56,15 +49,24 @@ public class CloudHubConnectionProvider implements PoolingConnectionProvider<Clo
   @Parameter
   private String username;
 
+  /**
+   * Password of the Anypoint Platform Account
+   */
   @Parameter
   @Password
   private String password;
 
+  /**
+   * Platform Environment to use. It is Optional, and by default will be used the one defined as Default in the platform.
+   */
   @Parameter
   @Optional
   @OfValues(EnvironmentsValueProvider.class)
-  private String defaultEnvironment;
+  private String environment;
 
+  /**
+   * This is used to change between the US and EU Anypoint Platform if is required.
+   */
   @Parameter
   @Optional(defaultValue = "https://anypoint.mulesoft.com")
   @Placement(tab = ADVANCED_TAB)
@@ -77,7 +79,7 @@ public class CloudHubConnectionProvider implements PoolingConnectionProvider<Clo
 
   @Override
   public CloudHubConnection connect() {
-    return new CloudHubConnection(username, password, defaultEnvironment, anypointPlatformUrl, httpService);
+    return new CloudHubConnection(username, password, environment, anypointPlatformUrl, httpService);
   }
 
   @Override
@@ -91,21 +93,26 @@ public class CloudHubConnectionProvider implements PoolingConnectionProvider<Clo
       HttpResponse httpResponse = connection.users.current.permissions.getPermissions().get();
       int statusCode = httpResponse.getStatusCode();
       if (statusCode > 299) {
-        byte[] bytes = httpResponse.getEntity().getBytes();
+        String response = getResponseBody(httpResponse);
         switch (statusCode) {
           case 401:
           case 403: {
-            return ConnectionValidationResult.failure("Invalid Credentials. Original Message: " + new String(bytes),
-                                                      new ModuleException("Invalid Credentials", INVALID_CREDENTIALS));
+            return ConnectionValidationResult.failure("Invalid Credentials. Original Message: " + response,
+                                                      new CloudHubException("Invalid Credentials", INVALID_CREDENTIALS));
           }
         }
-        return ConnectionValidationResult.failure("Unknown error", new RuntimeException());
+        return ConnectionValidationResult
+            .failure("Unknown Error occurred tyring to validate the connection. Original Message: " + response,
+                     new CloudHubConnectivityException("Unknown Error occurred tyring to validate the connection"));
       }
-    } catch (InterruptedException | ExecutionException e) {
-      return ConnectionValidationResult.failure("Unknown error", e);
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (InterruptedException | ExecutionException | IOException e) {
+      return ConnectionValidationResult.failure("Unexpected Error occurred trying to validate the connection.",
+                                                new CloudHubConnectivityException(e.getMessage(), e));
     }
     return ConnectionValidationResult.success();
+  }
+
+  private String getResponseBody(HttpResponse response) throws IOException {
+    return new String(response.getEntity().getBytes());
   }
 }

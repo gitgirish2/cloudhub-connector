@@ -43,7 +43,7 @@ public class Notifications {
                                               requestBuilder.addQueryParam("status", status);
                                             }
                                             if (search != null) {
-                                                requestBuilder.addQueryParam("search", search);
+                                              requestBuilder.addQueryParam("search", search);
                                             }
                                           }, NOTIFICATIONS, GET);
   }

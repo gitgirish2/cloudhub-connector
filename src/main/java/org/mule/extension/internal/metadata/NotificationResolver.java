@@ -14,6 +14,11 @@ import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.metadata.resolving.OutputStaticTypeResolver;
 
+/**
+ * Resolver that describes the structure of a Notification.
+ *
+ * @since 1.0.0
+ */
 public class NotificationResolver extends OutputStaticTypeResolver {
 
   @Override

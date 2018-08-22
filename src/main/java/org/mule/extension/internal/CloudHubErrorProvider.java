@@ -6,7 +6,8 @@
  */
 package org.mule.extension.internal;
 
-import static org.mule.extension.internal.CloudHubError.CONNECTIVITY;
+import static org.mule.extension.internal.error.CloudHubError.CONNECTIVITY;
+import static org.mule.extension.internal.error.CloudHubError.EXECUTION;
 
 import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
@@ -14,12 +15,18 @@ import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * CloudHub Errors
+ *
+ * @since 1.0.0
+ */
 public class CloudHubErrorProvider implements ErrorTypeProvider {
 
   @Override
   public Set<ErrorTypeDefinition> getErrorTypes() {
     Set<ErrorTypeDefinition> errors = new HashSet<>();
     errors.add(CONNECTIVITY);
+    errors.add(EXECUTION);
     return errors;
   }
 }

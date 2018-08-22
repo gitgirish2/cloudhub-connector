@@ -6,6 +6,8 @@
  */
 package org.mule.extension.internal.value.provider;
 
+import static java.util.Collections.emptyMap;
+
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
@@ -22,6 +24,7 @@ import org.mule.runtime.extension.api.values.ValueProvider;
 import org.mule.runtime.http.api.HttpService;
 
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -46,31 +49,32 @@ abstract class BaseValueProvider implements ValueProvider {
 
       @Override
       public void success(Result<InputStream, Void> result) {
-        CountDownLatch countDownLatch1 = new CountDownLatch(1);
+        CountDownLatch transformationLatch = new CountDownLatch(1);
         Scheduler scheduler = schedulerService.cpuLightScheduler();
         scheduler.execute(() -> {
           try {
-            InputStream output = result.getOutput();
-            String s = IOUtils.toString(output);
-            TypedValue typedValue =
-                new TypedValue<>(s, DataType.builder().type(InputStream.class).mediaType(result.getMediaType().get()).build());
+
             TypedValue<?> payload =
-                expressionManager.evaluate(expression, BindingContext.builder().addBinding("payload", typedValue).build());
+                expressionManager.evaluate(expression, BindingContext.builder()
+                    .addBinding("payload", getTypedValue(result))
+                    .build());
+
             Map<String, String> value = (Map<String, String>) payload.getValue();
-            values.set(ValueBuilder.getValuesFor(value));
+            values.set(ValueBuilder.getValuesFor(value == null ? emptyMap() : value));
           } finally {
-            countDownLatch1.countDown();
+            transformationLatch.countDown();
           }
         });
         try {
-          countDownLatch1.await();
+          transformationLatch.await();
         } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        scheduler.stop();
-        scheduler = null;
+          throwableReference.set(e);
+        } finally {
+          scheduler.stop();
+          scheduler = null;
 
-        countDownLatch.countDown();
+          countDownLatch.countDown();
+        }
       }
 
       @Override
@@ -79,5 +83,11 @@ abstract class BaseValueProvider implements ValueProvider {
         countDownLatch.countDown();
       }
     };
+  }
+
+  private TypedValue getTypedValue(Result<InputStream, Void> result) {
+    InputStream output = result.getOutput();
+    String s = IOUtils.toString(output);
+    return new TypedValue<>(s, DataType.builder().type(InputStream.class).mediaType(result.getMediaType().get()).build());
   }
 }

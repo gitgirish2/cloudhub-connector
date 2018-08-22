@@ -11,9 +11,11 @@
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
     <munit:config name="new-test-suite.xml" />
-    
+
+    <configuration-properties file="cloudhub.properties"/>
+
     <cloudhub:config name="config">
-        <cloudhub:connection username="${user}" password="${password}" defaultEnvironment="295da1be-daa9-421f-8697-692d4f4e1193" />
+        <cloudhub:connection username="${user}" password="${password}" environment="${environment}" />
     </cloudhub:config>
 
     <munit:test name="createNotificationThenList" >
@@ -48,11 +50,11 @@ http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule
             <logger message="#[payload]" level="DEBUG"/>
             <munit-tools:assert-that expression="#[sizeOf(payload)]" is="#[MunitTools::equalTo(1)]"/>
             <set-payload value="#[payload[0]]"/>
-            <munit-tools:assert-that expression="#[payload.status]" is="#[MunitTools::equalTo('unread')]"/>
-            <cloudhub:mark-notification markAs="READ" notificationId="#[payload.id]"/>
+            <munit-tools:assert-that expression="#[payload.read]" is="#[MunitTools::equalTo(false)]"/>
+            <cloudhub:mark-notification config-ref="config" markAs="READ" notificationId="#[payload.id]"/>
             <cloudhub:list-notifications config-ref="config" domain="#[vars.domain]" status="ALL"/>
             <set-payload value="#[payload[0]]"/>
-            <munit-tools:assert-that expression="#[payload.status]" is="#[MunitTools::equalTo('read')]"/>
+            <munit-tools:assert-that expression="#[payload.read]" is="#[MunitTools::equalTo(true)]"/>
         </munit:validation>
     </munit:test>
 

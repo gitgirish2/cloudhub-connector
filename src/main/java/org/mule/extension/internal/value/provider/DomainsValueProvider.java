@@ -6,6 +6,8 @@
  */
 package org.mule.extension.internal.value.provider;
 
+import static java.util.concurrent.TimeUnit.HOURS;
+
 import org.mule.extension.internal.CloudHubOperations;
 import org.mule.extension.internal.StatisticsInformation;
 import org.mule.extension.internal.connection.CloudHubConnection;
@@ -14,6 +16,7 @@ import org.mule.runtime.api.value.Value;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.values.ValueResolvingException;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -32,12 +35,12 @@ public class DomainsValueProvider extends BaseValueProvider {
   @Override
   public Set<Value> resolve() throws ValueResolvingException {
     CountDownLatch countDownLatch = new CountDownLatch(1);
-    Reference<Set<Value>> values = new Reference<>();
+    Reference<Set<Value>> valuesReference = new Reference<>(new HashSet<>());
     Reference<Throwable> throwableReference = new Reference<>();
 
     new CloudHubOperations()
-        .listApplications(cloudHubConnection, new StatisticsInformation(false, 0, null), false, false, false,
-                          createCallbackHandler(countDownLatch, values, throwableReference, EXPRESSION));
+        .listApplications(cloudHubConnection, new StatisticsInformation(false, 0, HOURS), false, false, false,
+                          createCallbackHandler(countDownLatch, valuesReference, throwableReference, EXPRESSION));
     try {
       countDownLatch.await();
     } catch (InterruptedException e) {
@@ -48,6 +51,6 @@ public class DomainsValueProvider extends BaseValueProvider {
       throw new ValueResolvingException("Unexpected Error", "UNKNOWN", throwableReference.get());
     }
 
-    return values.get();
+    return valuesReference.get();
   }
 }

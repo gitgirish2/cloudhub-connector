@@ -5,13 +5,18 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/cloudhub http://www.mulesoft.org/schema/mule/cloudhub/current/mule-cloudhub.xsd">
 
+    <configuration-properties file="cloudhub.properties"/>
 
     <cloudhub:config name="config" >
-        <cloudhub:connection username="${user}" password="${password}" defaultEnvironment="5527eaf6e4b001dbac499559" />
+        <cloudhub:connection username="${user}" password="${password}" environment="${environment}" />
     </cloudhub:config>
 
     <cloudhub:config name="config-invalid" >
-        <cloudhub:connection username="${user}" password="invalid-password" defaultEnvironment="5527eaf6e4b001dbac499559" />
+        <cloudhub:connection username="${user}" password="invalid-password" environment="5527eaf6e4b001dbac499559" />
     </cloudhub:config>
+
+    <flow name="domains-resolver">
+        <cloudhub:get-application config-ref="config" domain="#[attributes.queryParams.domain]"/>
+    </flow>
 
 </mule>
