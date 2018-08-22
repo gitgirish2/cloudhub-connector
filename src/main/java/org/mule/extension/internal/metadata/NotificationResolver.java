@@ -30,6 +30,7 @@ public class NotificationResolver extends OutputStaticTypeResolver {
     notificationType.addField().key("id").required().value().stringType();
     notificationType.addField().key("domain").required().value().stringType();
     notificationType.addField().key("message").value().stringType();
+    notificationType.addField().key("priority").value().stringType();
     notificationType.addField().key("properties").value()
         .objectType().openWith().stringType();
     notificationType.addField().key("read").required().value().booleanType();

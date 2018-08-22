@@ -6,6 +6,8 @@
  */
 package org.mule.extension.internal.model;
 
+import org.mule.extension.api.Priority;
+
 import java.util.Map;
 
 public class Notification {
@@ -14,12 +16,14 @@ public class Notification {
   private String id;
   private String message;
   private Map<String, String> customProperties;
+  private Priority priority;
 
-  public Notification(String domain, String id, String message, Map<String, String> customProperties) {
+  public Notification(String domain, String id, String message, Map<String, String> customProperties, Priority priority) {
     this.domain = domain;
     this.id = id;
     this.message = message;
     this.customProperties = customProperties;
+    this.priority = priority;
   }
 
   public String getDomain() {

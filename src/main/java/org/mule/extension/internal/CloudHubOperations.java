@@ -13,8 +13,10 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
 
 import org.mule.extension.api.MarkStatus;
 import org.mule.extension.api.NotificationStatus;
+import org.mule.extension.api.Priority;
 import org.mule.extension.internal.connection.CloudHubConnection;
-import org.mule.extension.internal.metadata.AnyResolver;
+import org.mule.extension.internal.error.CloudHubErrorProvider;
+import org.mule.extension.internal.metadata.GetApplicationOutputResolver;
 import org.mule.extension.internal.metadata.GetApplicationsOutputResolver;
 import org.mule.extension.internal.metadata.NotificationResolver;
 import org.mule.extension.internal.model.Notification;
@@ -22,11 +24,9 @@ import org.mule.extension.internal.value.provider.DomainsValueProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.core.api.el.ExpressionManager;
-import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.extension.api.annotation.Ignore;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
-import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.MediaType;
@@ -42,8 +42,6 @@ import org.mule.runtime.extension.api.runtime.streaming.PagingProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -51,8 +49,6 @@ import java.util.concurrent.CountDownLatch;
 import javax.inject.Inject;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
 
 /**
@@ -81,9 +77,10 @@ public class CloudHubOperations {
   public void listApplications(
                                @Connection CloudHubConnection cloudHubConnection,
                                @ParameterGroup(name = "Statistics Information") StatisticsInformation statisticsInformation,
-                               @Optional(defaultValue = "true") boolean retrieveLogLevels,
-                               @Optional(defaultValue = "true") boolean retrieveTrackingSettings,
-                               @Optional(defaultValue = "true") boolean retrieveIpAddresses,
+                               @DisplayName("Retrieve Log Levels") @Optional(defaultValue = "true") boolean retrieveLogLevels,
+                               @DisplayName("Retrieve Tracking Settings") @Optional(
+                                   defaultValue = "true") boolean retrieveTrackingSettings,
+                               @DisplayName("Retrieve IP Addresses") @Optional(defaultValue = "true") boolean retrieveIpAddresses,
                                CompletionCallback<InputStream, Void> competitionCallback) {
     cloudHubConnection.v2.applications
         .get(statisticsInformation.isRetrieveStatistics(),
@@ -103,7 +100,7 @@ public class CloudHubOperations {
    */
   @DisplayName("Get Application")
   @MediaType(MediaType.APPLICATION_JSON)
-  @OutputResolver(output = GetApplicationsOutputResolver.class)
+  @OutputResolver(output = GetApplicationOutputResolver.class)
   public void getApplication(
                              @Connection CloudHubConnection cloudHubConnection,
                              @OfValues(DomainsValueProvider.class) String domain,
@@ -121,18 +118,20 @@ public class CloudHubOperations {
    * @param message            Notification's message
    * @param customProperties   Additional properties for the notification
    * @param transactionId      Transaction ID for the Notification
+   * @param priority           Priority of the notification to create. INFO, WARN or ERROR.
    * @param completionCallback
    */
   @DisplayName("Create Notification")
   public void createNotification(@Connection CloudHubConnection connection,
                                  @OfValues(DomainsValueProvider.class) String domain,
-                                 @Content(primary = true) @TypeResolver(AnyResolver.class) InputStream message,
+                                 @Content(primary = true) String message,
                                  @NullSafe @Optional @Content Map<String, String> customProperties,
+                                 @Optional Priority priority,
                                  @Optional String transactionId,
                                  CompletionCallback<Void, Void> completionCallback) {
 
     String notification = new Gson()
-        .toJson(new Notification(domain, transactionId, IOUtils.toString(message), customProperties));
+        .toJson(new Notification(domain, transactionId, message, customProperties, priority));
 
     connection.notifications
         .post(new ByteArrayInputStream(notification.getBytes()))
@@ -142,13 +141,9 @@ public class CloudHubOperations {
   /**
    * Lists all the available notifications for a giver domain.
    *
-   * @param cloudHubConnection
    * @param domain             Name of the application to gather notifications from
-   * @param limit              Max number of notifications to retrieve
-   * @param pageSize           Offset of the notifications to retrieve
-   * @param status             Filters the notifications by status. Read, Unread or All.
-   * @param search             If specified, only return notifications where the message contains this string. (Insensitive)
-   * @param completionCallback
+   * @param limit              Number of notifications to retrieve. -1 means everything available.
+   * @param pageSize           Size of the page to retrieve per iteration. This only should be changed for performance purposes.
    */
   @DisplayName("List Notifications")
   @MediaType("application/java")
@@ -158,9 +153,8 @@ public class CloudHubOperations {
                                                                                    @Optional(defaultValue = "-1") int limit,
                                                                                    @Placement(tab = ADVANCED_TAB) @Optional(
                                                                                        defaultValue = "25") int pageSize,
-                                                                                   @Optional(
-                                                                                       defaultValue = "UNREAD") NotificationStatus status,
-                                                                                   @Optional String search) {
+                                                                                   @ParameterGroup(
+                                                                                       name = "Notification Filter") NotificationFilterConfiguration filterConfiguration) {
 
     return new PagingProvider<CloudHubConnection, Map<String, Object>>() {
 
@@ -193,26 +187,20 @@ public class CloudHubOperations {
                 resolutionLatch.countDown();
               }
             };
-        int notificationsToGather;
-        if (limit < 0) {
-          notificationsToGather = 25;
-        } else {
-          int missingNotifications = limit - currentOffset;
-          notificationsToGather = missingNotifications <= pageSize ? missingNotifications : pageSize;
-        }
-
+        int notificationsToGather = getNotificationsToGather();
         if (notificationsToGather <= 0) {
           return emptyList();
         }
 
-        connection.notifications.get(domain, notificationsToGather, currentOffset, toQueryParams(status), search)
+        connection.notifications.get(domain, notificationsToGather, currentOffset, toQueryParams(filterConfiguration.getStatus()),
+                                     filterConfiguration.getSearch())
             .whenCompleteAsync(createCompletionHandler(completionCallback, "#[output application/java --- payload.data]",
                                                        expressionManager));
 
         try {
           resolutionLatch.await();
         } catch (InterruptedException e) {
-          e.printStackTrace();
+          throw new RuntimeException(e);
         }
 
         if (error.get() != null) {
@@ -237,12 +225,20 @@ public class CloudHubOperations {
 
       @Override
       public void close(CloudHubConnection connection) throws MuleException {
+        //nothing to do
+      }
 
+      private int getNotificationsToGather() {
+        int notificationsToGather;
+        if (limit < 0) {
+          notificationsToGather = 25;
+        } else {
+          int missingNotifications = limit - currentOffset;
+          notificationsToGather = missingNotifications <= pageSize ? missingNotifications : pageSize;
+        }
+        return notificationsToGather;
       }
     };
-
-    //    cloudHubConnection.notifications.get(domain, limit, offset, toQueryParams(status), search)
-    //        .whenCompleteAsync(createCompletionHandler(completionCallback, "#[payload.data]", expressionManager));
   }
 
 

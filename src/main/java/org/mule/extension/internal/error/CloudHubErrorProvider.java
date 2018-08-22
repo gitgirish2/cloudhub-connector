@@ -4,7 +4,7 @@
  * (or other master license agreement) separately entered into in writing between you and
  * MuleSoft. If such an agreement is not in place, you may not use the software.
  */
-package org.mule.extension.internal;
+package org.mule.extension.internal.error;
 
 import static org.mule.extension.internal.error.CloudHubError.CONNECTIVITY;
 import static org.mule.extension.internal.error.CloudHubError.EXECUTION;

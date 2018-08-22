@@ -1,0 +1,438 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "Application",
+  "required": [
+    "versionId",
+    "domain",
+    "fullDomain",
+    "properties",
+    "propertiesOptions",
+    "status",
+    "workers",
+    "workerStatuses",
+    "lastUpdateTime",
+    "fileName",
+    "muleVersion",
+    "previousMuleVersion",
+    "region",
+    "persistentQueues",
+    "persistentQueuesEncryptionEnabled",
+    "persistentQueuesEncrypted",
+    "monitoringEnabled",
+    "monitoringAutoRestart",
+    "staticIPsEnabled",
+    "hasFile",
+    "secureDataGatewayEnabled",
+    "loggingNgEnabled",
+    "loggingCustomLog4JEnabled",
+    "deploymentGroup",
+    "updateRuntimeConfig",
+    "trackingSettings",
+    "logLevels",
+    "ipAddresses"
+  ],
+  "properties": {
+    "versionId": {
+      "$id": "#/properties/versionId",
+      "type": "string",
+      "title": "The Versionid Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "domain": {
+      "$id": "#/properties/domain",
+      "type": "string",
+      "title": "The Domain Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "fullDomain": {
+      "$id": "#/properties/fullDomain",
+      "type": "string",
+      "title": "The Fulldomain Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "properties": {
+      "$id": "#/properties/properties",
+      "type": "object",
+      "title": "The Properties Schema",
+      "required": [
+        "slack.token",
+        "cron.expression",
+        "slack.channelId"
+      ],
+      "properties": {
+        "slack.token": {
+          "$id": "#/properties/properties/properties/slack.token",
+          "type": "string",
+          "title": "The Slack.token Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "cron.expression": {
+          "$id": "#/properties/properties/properties/cron.expression",
+          "type": "string",
+          "title": "The Cron.expression Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "slack.channelId": {
+          "$id": "#/properties/properties/properties/slack.channelId",
+          "type": "string",
+          "title": "The Slack.channelid Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "propertiesOptions": {
+      "$id": "#/properties/propertiesOptions",
+      "type": "object",
+      "title": "The Propertiesoptions Schema"
+    },
+    "status": {
+      "$id": "#/properties/status",
+      "type": "string",
+      "title": "The Status Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "workers": {
+      "$id": "#/properties/workers",
+      "type": "object",
+      "title": "The Workers Schema",
+      "required": [
+        "type",
+        "amount",
+        "remainingOrgWorkers",
+        "totalOrgWorkers"
+      ],
+      "properties": {
+        "type": {
+          "$id": "#/properties/workers/properties/type",
+          "type": "object",
+          "title": "The Type Schema",
+          "required": [
+            "name",
+            "weight",
+            "cpu",
+            "memory"
+          ],
+          "properties": {
+            "name": {
+              "$id": "#/properties/workers/properties/type/properties/name",
+              "type": "string",
+              "title": "The Name Schema",
+              "default": "",
+              "pattern": "^(.*)$"
+            },
+            "weight": {
+              "$id": "#/properties/workers/properties/type/properties/weight",
+              "type": "number",
+              "title": "The Weight Schema",
+              "default": 0.0
+            },
+            "cpu": {
+              "$id": "#/properties/workers/properties/type/properties/cpu",
+              "type": "string",
+              "title": "The Cpu Schema",
+              "default": "",
+              "pattern": "^(.*)$"
+            },
+            "memory": {
+              "$id": "#/properties/workers/properties/type/properties/memory",
+              "type": "string",
+              "title": "The Memory Schema",
+              "default": "",
+              "pattern": "^(.*)$"
+            }
+          }
+        },
+        "amount": {
+          "$id": "#/properties/workers/properties/amount",
+          "type": "integer",
+          "title": "The Amount Schema",
+          "default": 0
+        },
+        "remainingOrgWorkers": {
+          "$id": "#/properties/workers/properties/remainingOrgWorkers",
+          "type": "number",
+          "title": "The Remainingorgworkers Schema",
+          "default": 0.0
+        },
+        "totalOrgWorkers": {
+          "$id": "#/properties/workers/properties/totalOrgWorkers",
+          "type": "integer",
+          "title": "The Totalorgworkers Schema",
+          "default": 0
+        }
+      }
+    },
+    "workerStatuses": {
+      "$id": "#/properties/workerStatuses",
+      "type": "array",
+      "title": "The Workerstatuses Schema",
+      "items": {
+        "$id": "#/properties/workerStatuses/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "id",
+          "host",
+          "port",
+          "status",
+          "deployedRegion",
+          "staticIPEnabled"
+        ],
+        "properties": {
+          "id": {
+            "$id": "#/properties/workerStatuses/items/properties/id",
+            "type": "string",
+            "title": "The Id Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "host": {
+            "$id": "#/properties/workerStatuses/items/properties/host",
+            "type": "string",
+            "title": "The Host Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "port": {
+            "$id": "#/properties/workerStatuses/items/properties/port",
+            "type": "integer",
+            "title": "The Port Schema",
+            "default": 0
+          },
+          "status": {
+            "$id": "#/properties/workerStatuses/items/properties/status",
+            "type": "string",
+            "title": "The Status Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "deployedRegion": {
+            "$id": "#/properties/workerStatuses/items/properties/deployedRegion",
+            "type": "string",
+            "title": "The Deployedregion Schema",
+            "default": "",
+            "pattern": "^(.*)$"
+          },
+          "staticIPEnabled": {
+            "$id": "#/properties/workerStatuses/items/properties/staticIPEnabled",
+            "type": "boolean",
+            "title": "The Staticipenabled Schema",
+            "default": false
+          }
+        }
+      }
+    },
+    "lastUpdateTime": {
+      "$id": "#/properties/lastUpdateTime",
+      "type": "integer",
+      "title": "The Lastupdatetime Schema",
+      "default": 0
+    },
+    "fileName": {
+      "$id": "#/properties/fileName",
+      "type": "string",
+      "title": "The Filename Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "muleVersion": {
+      "$id": "#/properties/muleVersion",
+      "type": "object",
+      "title": "The Muleversion Schema",
+      "required": [
+        "version",
+        "updateId",
+        "endOfSupportDate"
+      ],
+      "properties": {
+        "version": {
+          "$id": "#/properties/muleVersion/properties/version",
+          "type": "string",
+          "title": "The Version Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "updateId": {
+          "$id": "#/properties/muleVersion/properties/updateId",
+          "type": "string",
+          "title": "The Updateid Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "endOfSupportDate": {
+          "$id": "#/properties/muleVersion/properties/endOfSupportDate",
+          "type": "integer",
+          "title": "The Endofsupportdate Schema",
+          "default": 0
+        }
+      }
+    },
+    "previousMuleVersion": {
+      "$id": "#/properties/previousMuleVersion",
+      "type": "object",
+      "title": "The Previousmuleversion Schema",
+      "required": [
+        "version",
+        "updateId",
+        "endOfSupportDate"
+      ],
+      "properties": {
+        "version": {
+          "$id": "#/properties/previousMuleVersion/properties/version",
+          "type": "string",
+          "title": "The Version Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "updateId": {
+          "$id": "#/properties/previousMuleVersion/properties/updateId",
+          "type": "string",
+          "title": "The Updateid Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "endOfSupportDate": {
+          "$id": "#/properties/previousMuleVersion/properties/endOfSupportDate",
+          "type": "integer",
+          "title": "The Endofsupportdate Schema",
+          "default": 0
+        }
+      }
+    },
+    "region": {
+      "$id": "#/properties/region",
+      "type": "string",
+      "title": "The Region Schema",
+      "default": "",
+      "pattern": "^(.*)$"
+    },
+    "persistentQueues": {
+      "$id": "#/properties/persistentQueues",
+      "type": "boolean",
+      "title": "The Persistentqueues Schema",
+      "default": false
+    },
+    "persistentQueuesEncryptionEnabled": {
+      "$id": "#/properties/persistentQueuesEncryptionEnabled",
+      "type": "boolean",
+      "title": "The Persistentqueuesencryptionenabled Schema",
+      "default": false
+    },
+    "persistentQueuesEncrypted": {
+      "$id": "#/properties/persistentQueuesEncrypted",
+      "type": "boolean",
+      "title": "The Persistentqueuesencrypted Schema",
+      "default": false
+    },
+    "monitoringEnabled": {
+      "$id": "#/properties/monitoringEnabled",
+      "type": "boolean",
+      "title": "The Monitoringenabled Schema",
+      "default": false
+    },
+    "monitoringAutoRestart": {
+      "$id": "#/properties/monitoringAutoRestart",
+      "type": "boolean",
+      "title": "The Monitoringautorestart Schema",
+      "default": false
+    },
+    "staticIPsEnabled": {
+      "$id": "#/properties/staticIPsEnabled",
+      "type": "boolean",
+      "title": "The Staticipsenabled Schema",
+      "default": false
+    },
+    "hasFile": {
+      "$id": "#/properties/hasFile",
+      "type": "boolean",
+      "title": "The Hasfile Schema",
+      "default": false
+    },
+    "secureDataGatewayEnabled": {
+      "$id": "#/properties/secureDataGatewayEnabled",
+      "type": "boolean",
+      "title": "The Securedatagatewayenabled Schema",
+      "default": false
+    },
+    "loggingNgEnabled": {
+      "$id": "#/properties/loggingNgEnabled",
+      "type": "boolean",
+      "title": "The Loggingngenabled Schema",
+      "default": false
+    },
+    "loggingCustomLog4JEnabled": {
+      "$id": "#/properties/loggingCustomLog4JEnabled",
+      "type": "boolean",
+      "title": "The Loggingcustomlog4jenabled Schema",
+      "default": false
+    },
+    "deploymentGroup": {
+      "$id": "#/properties/deploymentGroup",
+      "type": "object",
+      "title": "The Deploymentgroup Schema",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$id": "#/properties/deploymentGroup/properties/id",
+          "type": "string",
+          "title": "The Id Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        },
+        "name": {
+          "$id": "#/properties/deploymentGroup/properties/name",
+          "type": "string",
+          "title": "The Name Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "updateRuntimeConfig": {
+      "$id": "#/properties/updateRuntimeConfig",
+      "type": "boolean",
+      "title": "The Updateruntimeconfig Schema",
+      "default": false
+    },
+    "trackingSettings": {
+      "$id": "#/properties/trackingSettings",
+      "type": "object",
+      "title": "The Trackingsettings Schema",
+      "required": [
+        "trackingLevel"
+      ],
+      "properties": {
+        "trackingLevel": {
+          "$id": "#/properties/trackingSettings/properties/trackingLevel",
+          "type": "string",
+          "title": "The Trackinglevel Schema",
+          "default": "",
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "logLevels": {
+      "$id": "#/properties/logLevels",
+      "type": "array",
+      "title": "The Loglevels Schema"
+    },
+    "ipAddresses": {
+      "$id": "#/properties/ipAddresses",
+      "type": "array",
+      "title": "The Ipaddresses Schema"
+    }
+  }
+}
