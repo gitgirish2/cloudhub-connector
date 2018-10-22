@@ -13,14 +13,14 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-ee-core-modules-parent</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
     </parent>
 
     <properties>
         <munit.input.directory>src/test/munit</munit.input.directory>
         <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
-        <munit.extensions.maven.plugin.version>1.0.0-SNAPSHOT</munit.extensions.maven.plugin.version>
-        <munit.version>2.2.0-SNAPSHOT</munit.version>
+        <munit.extensions.maven.plugin.version>1.0.0-BETA</munit.extensions.maven.plugin.version>
+        <munit.version>2.2.0-BETA</munit.version>
         <mavenResourcesVersion>3.0.2</mavenResourcesVersion>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <licenseYear>2018</licenseYear>
@@ -58,63 +58,63 @@
     <build>
 
         <plugins>
-            <!--<plugin>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-                <!--<version>${mavenResourcesVersion}</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-munit-resources</id>-->
-                        <!--<phase>process-test-resources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>${munit.output.directory}</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--<resource>-->
-                                    <!--<directory>${munit.input.directory}</directory>-->
-                                    <!--<filtering>true</filtering>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${mavenResourcesVersion}</version>
+                <executions>
+                    <execution>
+                        <id>copy-munit-resources</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${munit.output.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${munit.input.directory}</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
 
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>com.mulesoft.munit</groupId>-->
-                <!--<artifactId>munit-extensions-maven-plugin</artifactId>-->
-                <!--<version>${munit.extensions.maven.plugin.version}</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>test</goal>-->
-                        <!--</goals>-->
-                        <!--<phase>integration-test</phase>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<dependencies>-->
-                    <!--&lt;!&ndash; MUnit Dependencies &ndash;&gt;-->
-                    <!--<dependency>-->
-                        <!--<groupId>com.mulesoft.munit</groupId>-->
-                        <!--<artifactId>munit-runner</artifactId>-->
-                        <!--<version>${munit.version}</version>-->
-                        <!--<classifier>mule-plugin</classifier>-->
-                    <!--</dependency>-->
-                    <!--<dependency>-->
-                        <!--<groupId>com.mulesoft.munit</groupId>-->
-                        <!--<artifactId>munit-tools</artifactId>-->
-                        <!--<version>${munit.version}</version>-->
-                        <!--<classifier>mule-plugin</classifier>-->
-                    <!--</dependency>-->
-                    <!--<dependency>-->
-                        <!--<groupId>com.mulesoft.munit</groupId>-->
-                        <!--<artifactId>mtf-tools</artifactId>-->
-                        <!--<version>1.0.0-SNAPSHOT</version>-->
-                        <!--<classifier>mule-plugin</classifier>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
-            <!--</plugin>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mulesoft.munit</groupId>
+                <artifactId>munit-extensions-maven-plugin</artifactId>
+                <version>${munit.extensions.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <!-- MUnit Dependencies -->
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-runner</artifactId>
+                        <version>${munit.version}</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-tools</artifactId>
+                        <version>${munit.version}</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>mtf-tools</artifactId>
+                        <version>1.0.0-SNAPSHOT</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 

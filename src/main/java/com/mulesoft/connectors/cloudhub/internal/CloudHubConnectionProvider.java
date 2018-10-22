@@ -98,7 +98,8 @@ public class CloudHubConnectionProvider implements CachedConnectionProvider<Clou
           case 401:
           case 403: {
             return ConnectionValidationResult.failure("Invalid Credentials. Original Message: " + response,
-                                                      new CloudHubException("Invalid Credentials", INVALID_CREDENTIALS));
+                                                      new CloudHubException("Invalid Credentials", statusCode,
+                                                                            INVALID_CREDENTIALS));
           }
         }
         return ConnectionValidationResult

@@ -11,11 +11,19 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 
 public class CloudHubException extends ModuleException {
 
-  public CloudHubException(String message, CloudHubError error) {
+  private int statusCode;
+
+  public CloudHubException(String message, int statusCode, CloudHubError error) {
     super(message, error);
+    this.statusCode = statusCode;
   }
 
-  public CloudHubException(String message, CloudHubError error, ConnectionException e) {
+  public CloudHubException(String message, int statusCode, CloudHubError error, ConnectionException e) {
     super(message, error, e);
+    this.statusCode = statusCode;
+  }
+
+  public int getStatusCode() {
+    return statusCode;
   }
 }

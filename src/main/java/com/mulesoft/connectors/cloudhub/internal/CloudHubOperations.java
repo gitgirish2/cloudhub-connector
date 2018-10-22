@@ -130,12 +130,26 @@ public class CloudHubOperations {
                                  @Optional String transactionId,
                                  CompletionCallback<Void, Void> completionCallback) {
 
+    new RetryCompletionCallback<>((callback) -> doCreateNotification(connection, domain, message, customProperties, priority,
+                                                                     transactionId, callback),
+                                  completionCallback)
+                                      .execute();
+  }
+
+  private void doCreateNotification(CloudHubConnection connection,
+                                    String domain,
+                                    String message,
+                                    Map<String, String> customProperties,
+                                    Priority priority,
+                                    String transactionId,
+                                    CompletionCallback cloudHubCompletionCallback) {
+
     String notification = new Gson()
         .toJson(new Notification(domain, transactionId, message, customProperties, priority));
 
     connection.notifications
         .post(new ByteArrayInputStream(notification.getBytes()))
-        .whenCompleteAsync(createCompletionHandler((CompletionCallback) completionCallback));
+        .whenCompleteAsync(createCompletionHandler(cloudHubCompletionCallback));
   }
 
   /**

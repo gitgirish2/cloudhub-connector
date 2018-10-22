@@ -11,6 +11,7 @@ import static com.mulesoft.connectors.cloudhub.internal.error.CloudHubError.INVA
 import static org.mule.runtime.api.metadata.DataType.JSON_STRING;
 import static org.mule.runtime.api.metadata.MediaType.APPLICATION_JSON;
 
+import com.mulesoft.connectors.cloudhub.internal.error.CloudHubError;
 import com.mulesoft.connectors.cloudhub.internal.error.CloudHubException;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.el.BindingContext;
@@ -29,30 +30,28 @@ public class OperationUtils {
   private OperationUtils() {}
 
   static BiConsumer<HttpResponse, Throwable> createCompletionHandler(CompletionCallback<InputStream, Void> competitionCallback) {
-    return (s, e) -> {
-      if (s.getStatusCode() >= 300) {
-        validateHttpResponse(competitionCallback, s, e);
-      } else {
-        competitionCallback.success(Result.<InputStream, Void>builder().output(s.getEntity().getContent())
-            .mediaType(APPLICATION_JSON)
-            .build());
-      }
-    };
+    return createCompletionHandler(competitionCallback, null, null);
   }
 
   public static BiConsumer<HttpResponse, Throwable> createCompletionHandler(CompletionCallback competitionCallback,
                                                                             String payloadExpression,
                                                                             ExpressionManager expressionManager) {
-    return (s, e) -> {
-      if (e != null || s.getStatusCode() >= 300) {
-        validateHttpResponse(competitionCallback, s, e);
+    return (httpResponse, e) -> {
+      if (e != null || httpResponse.getStatusCode() >= 300) {
+        validateHttpResponse(competitionCallback, httpResponse, e);
       } else {
-        InputStream content = s.getEntity().getContent();
+        if (payloadExpression == null) {
+          competitionCallback.success(Result.<InputStream, Void>builder().output(httpResponse.getEntity().getContent())
+              .mediaType(APPLICATION_JSON)
+              .build());
+        } else {
+          InputStream content = httpResponse.getEntity().getContent();
 
-        competitionCallback
-            .success(Result.builder().output(expressionManager.evaluate(payloadExpression, createBinding(content)).getValue())
-                .mediaType(APPLICATION_JSON)
-                .build());
+          competitionCallback
+              .success(Result.builder().output(expressionManager.evaluate(payloadExpression, createBinding(content)).getValue())
+                  .mediaType(APPLICATION_JSON)
+                  .build());
+        }
       }
     };
   }
@@ -73,12 +72,13 @@ public class OperationUtils {
         case 401:
         case 403: {
           competitionCallback
-              .error(new CloudHubException("Invalid Credentials. Original Message: " + responseMessage, INVALID_CREDENTIALS,
-                                           new ConnectionException("Invalid Credentials")));
+              .error(new CloudHubException("Invalid Credentials. Original Message: " + responseMessage, response.getStatusCode(),
+                                           INVALID_CREDENTIALS, new ConnectionException("Invalid Credentials")));
           break;
         }
         default:
-          competitionCallback.error(new CloudHubException("Unknown Error. Original Message: " + responseMessage, EXECUTION));
+          competitionCallback.error(new CloudHubException("Unknown Error. Original Message: " + responseMessage,
+                                                          response.getStatusCode(), EXECUTION));
       }
     }
   }
